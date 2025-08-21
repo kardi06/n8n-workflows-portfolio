@@ -11,7 +11,7 @@ Workflow ini mengambil email baru dari Gmail, menyimpannya ke Google Sheets, lal
 ## 🛠️ Node Detail
 | Node | Fungsi | Konfigurasi |
 |------|---------|-------------|
-| Gmail Trigger | Memicu workflow | Subject contains "Inquiry" |
+| Gmail Trigger | Memicu workflow | Subject contains "[TEST]" |
 | Google Sheets | Append row | Spreadsheet: `Sheet1` |
 | Slack | Send Message | Channel: #jerpon-all |
 
