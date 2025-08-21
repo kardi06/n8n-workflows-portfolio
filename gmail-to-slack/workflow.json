@@ -1,0 +1,197 @@
+{
+  "name": "Gmail - sheet - slack",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ],
+          "q": "subject:\"[TEST]\" in:inbox newer_than:1d -category:updates"
+        }
+      },
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5caa4910-d2ef-4aa1-977f-1f45ac2391b9",
+      "name": "Gmail Trigger",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "buu9NUbz71lvX2PR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1npG_g6CitfegkItJUcgdL-3YV5IpHO_6qZLjhw7dalA/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1npG_g6CitfegkItJUcgdL-3YV5IpHO_6qZLjhw7dalA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "date": "={{ $json.internalDate\n  ? new Date(Number($json.internalDate))\n      .toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })\n  : $now.toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })\n}}",
+            "id": "={{ $json.id }}",
+            "subject": "={{ $json.Subject }}",
+            "from": "={{ $json.From }}",
+            "mail": "={{ $json.To }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "mail",
+              "displayName": "mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "from",
+              "displayName": "from",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "date",
+              "displayName": "date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7b8480d9-cb62-4706-9e01-c88a62662ae3",
+      "name": "Append or update row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "a9BdU0DXQnNRXlcj",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C09BE2TK8AD",
+          "mode": "list",
+          "cachedResultName": "all-jerpon"
+        },
+        "text": "=ada email dari  {{ $json.from }} isinya adalah {{ $json.subject }}",
+        "otherOptions": {}
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b5baf70e-b8a3-4c60-acbc-31baabaddf6b",
+      "name": "Send a message",
+      "webhookId": "9edd1b68-b944-484e-801e-949232955ef2",
+      "credentials": {
+        "slackApi": {
+          "id": "WeHCnVxkfOEqntPk",
+          "name": "Slack account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Gmail Trigger": {
+      "main": [
+        [
+          {
+            "node": "Append or update row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append or update row in sheet": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "19326512-9f93-4dfb-9236-2a6463d7c739",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "eeefdac3617838fba143f47e94b4d5bc12e707acaa9808a5cdb1ae96788aa0d5"
+  },
+  "id": "pjXsNh5XEeLlE8Jr",
+  "tags": []
+}
